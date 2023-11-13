@@ -19,7 +19,7 @@ test('Deve cadastrar um lead na fila de espera', async ({ page }) => {
   const toastMessage = 'Agradecemos por compartilhar seus dados conosco. Em breve, nossa equipe entrará em contato!'
   await expect(page.locator('.toast')).toHaveText(toastMessage)
 
-  await expect(page.locator('.toast')).toBeHidden({timeout:5000})
+  await expect(page.locator('.toast')).toBeHidden({ timeout: 5000 })
 
 });
 
@@ -39,6 +39,61 @@ test('Não deve cadastrar com email incorreto', async ({ page }) => {
     .getByText('Quero entrar na fila!').click()
 
   await expect(page.locator('.alert')).toHaveText('Email incorreto')
+
+});
+
+test('Não deve cadastrar quando o nome não é preenchido', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+
+  await page.getByRole('button', { name: /Aperte o play/ }).click();
+
+  await expect(
+    page.getByTestId('modal').getByRole('heading')
+  ).toHaveText('Fila de espera')
+
+  await page.getByPlaceholder('Seu email principal').fill('antonio.marques.pf@gmail.com')
+
+  await page.getByTestId('modal')
+    .getByText('Quero entrar na fila!').click()
+
+  await expect(page.locator('.alert')).toHaveText('Campo obrigatório')
+
+});
+
+test('Não deve cadastrar quando email não é preenchido', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+
+  await page.getByRole('button', { name: /Aperte o play/ }).click();
+
+  await expect(
+    page.getByTestId('modal').getByRole('heading')
+  ).toHaveText('Fila de espera')
+
+  await page.getByPlaceholder('Seu nome completo').fill('Antonio Maques')
+
+  await page.getByTestId('modal')
+    .getByText('Quero entrar na fila!').click()
+
+  await expect(page.locator('.alert')).toHaveText('Campo obrigatório')
+
+});
+
+test('Não deve cadastrar quando nenhum não é preenchido', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+
+  await page.getByRole('button', { name: /Aperte o play/ }).click();
+
+  await expect(
+    page.getByTestId('modal').getByRole('heading')
+  ).toHaveText('Fila de espera')
+
+  await page.getByTestId('modal')
+    .getByText('Quero entrar na fila!').click()
+
+  await expect(page.locator('.alert')).toHaveText([
+    'Campo obrigatório',
+    'Campo obrigatório'
+  ])
 
 });
 
